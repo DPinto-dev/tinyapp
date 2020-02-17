@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/DPintoLL/tinyapp/issues"
   },
-  "homepage": "https://github.com/DPintoLL/tinyapp#readme"
+  "homepage": "https://github.com/DPintoLL/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
