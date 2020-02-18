@@ -6,6 +6,9 @@ app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -39,13 +42,14 @@ app.get("/urls.json", (req, res) => {
 
 // Main GET route: page displays all urls in the "database"
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase }; // this is sending the urlDatabase object to the EJS template - it needs to be an object, even if it's a single variable, so that we can use its key to access the data within our template
+  let templateVars = { urls: urlDatabase, username: req.cookies["username"] }; // this is sending the urlDatabase object to the EJS template - it needs to be an object, even if it's a single variable, so that we can use its key to access the data within our template
   res.render("urls_index", templateVars); // This refers to the template './views/urls_index.ejs'. By default EJS automatically looks into the views directory for .ejs files
 });
 
 // Render the page for adding a new URL
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  res.render("urls_new", templateVars);
 });
 
 // Handles the POST request (from urls_new.ejs) that adds a new URL to the "database"
@@ -68,7 +72,8 @@ app.get("/urls/:shortURL", (req, res) => {
   // test with object shorthand notation
   let templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies["username"]
   };
   res.render("urls_show", templateVars);
 });
@@ -94,9 +99,16 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(urlDatabase[req.params.shortURL]);
 });
 
+// Receives login information and stores it in a cookie
 app.post("/login", (req, res) => {
   console.log(req.body.username);
   res.cookie("username", req.body.username);
+  res.redirect("/urls");
+});
+
+// "Logs out" the user by clearing the cookie file
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
   res.redirect("/urls");
 });
 
