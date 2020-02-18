@@ -22,6 +22,11 @@ const generateRandomString = () => {
   return returnString;
 };
 
+// function isValidURL(string) {
+//   var res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+//   return (res !== null)
+// };
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -40,8 +45,11 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send(req.body);
+  // Generates a new shortURL and stores it in the object
+  const newShortUrl = generateRandomString();
+  urlDatabase[newShortUrl] = req.body.longURL;
+  res.redirect(`/urls/${newShortUrl}`);
+  // res.send(`${req.body.longURL} was saved as ${newShortUrl}`);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -51,6 +59,11 @@ app.get("/urls/:shortURL", (req, res) => {
     longURL: urlDatabase[req.params.shortURL]
   };
   res.render("urls_show", templateVars);
+});
+
+// Redirects user to the longURL stored in our objects
+app.get("/u/:shortURL", (req, res) => {
+  res.redirect(urlDatabase[req.params.shortURL]);
 });
 
 app.get("/hello", (req, res) => {
