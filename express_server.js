@@ -30,7 +30,7 @@ function isValidURL(string) {
 }
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect("/urls");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -54,9 +54,8 @@ app.post("/urls", (req, res) => {
   // For now we are not rendering a specific page or doing client side validation for the URL
   let errorMsg;
   if (!isValidURL(req.body.longURL)) {
-    errorMsg = "Please use a valid URL format";
+    // ... WIP ...
   }
-  res.render("urls_new", { errorMsg: errorMsg || "" }); //If errorMsg is not defined inside of the if (!isValidURL...) it'll be ""
 
   // Generates a new shortURL and stores it in the object
   const newShortUrl = generateRandomString();
@@ -84,7 +83,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   // Tests if we have a valid URL and redirects to a 404 if not
   if (!isValidURL(req.body.longURL)) {
-    window.alert("Please use an URL with a valid format");
+    // ... WIP ...
   }
   urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect("/urls");
@@ -93,6 +92,12 @@ app.post("/urls/:shortURL", (req, res) => {
 // Redirects user to the longURL stored in our objects
 app.get("/u/:shortURL", (req, res) => {
   res.redirect(urlDatabase[req.params.shortURL]);
+});
+
+app.post("/login", (req, res) => {
+  console.log(req.body.username);
+  res.cookie("username", req.body.username);
+  res.redirect("/urls");
 });
 
 app.get("/error", (req, res) => {

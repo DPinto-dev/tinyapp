@@ -21,8 +21,6 @@
   <body>
     <%- include('partials/_header') %>
 
-    <div id="errorTransport" style="display: none;"><%= errorMsg %></div>
-
     <main style="margin: 1em;">
       <h3>Create TinyURL</h3>
       <form class="form-inline" action="/urls" method="POST">
@@ -57,9 +55,3 @@
     ></script>
   </body>
 </html>
-<script>
-  const errorTransport = document.getElementById("#errorTransport");
-  if (errorTransport.text() != "") {
-    alert(errorTransport.text());
-  }
-</script>
