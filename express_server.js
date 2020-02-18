@@ -22,10 +22,12 @@ const generateRandomString = () => {
   return returnString;
 };
 
-// function isValidURL(string) {
-//   var res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
-//   return (res !== null)
-// };
+function isValidURL(string) {
+  let res = string.match(
+    /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
+  );
+  return res !== null;
+}
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -45,11 +47,16 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  // Tests if we have a valid URL and redirects to a 404 if not
+  // For now we are not rendering a specific page or doing client side validation for the URL
+  if (!isValidURL(req.body.longURL)) {
+    res.redirect();
+  }
+
   // Generates a new shortURL and stores it in the object
   const newShortUrl = generateRandomString();
   urlDatabase[newShortUrl] = req.body.longURL;
   res.redirect(`/urls/${newShortUrl}`);
-  // res.send(`${req.body.longURL} was saved as ${newShortUrl}`);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -66,17 +73,9 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(urlDatabase[req.params.shortURL]);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
-app.get("/set", (req, res) => {
-  const a = 1;
-  res.send(`a = ${a}`);
-});
-
-app.get("/fetch", (req, res) => {
-  res.send(`a = ${a}`);
+app.get("/*", (req, res) => {
+  res.statusCode = 404;
+  res.end(`404 Page Not Found`);
 });
 
 app.listen(PORT, () => {
