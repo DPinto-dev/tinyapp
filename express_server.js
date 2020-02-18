@@ -1,8 +1,10 @@
 const app = require("express")();
 const PORT = 8080; // default port 8080
 const ejs = require("ejs");
-
 app.set("view engine", "ejs");
+
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
@@ -20,6 +22,15 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase }; // this is sending the urlDatabase object to the EJS template - it needs to be an object, even if it's a single variable, so that we can use its key to access the data within our template
   res.render("urls_index", templateVars); // This refers to the template './views/urls_index.ejs'. By default EJS automatically looks into the views directory for .ejs files
+});
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body);
+  res.send(req.body);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
