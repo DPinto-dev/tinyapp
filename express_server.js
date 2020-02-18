@@ -37,7 +37,7 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// Main route: page displays all urls in the "database"
+// Main GET route: page displays all urls in the "database"
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase }; // this is sending the urlDatabase object to the EJS template - it needs to be an object, even if it's a single variable, so that we can use its key to access the data within our template
   res.render("urls_index", templateVars); // This refers to the template './views/urls_index.ejs'. By default EJS automatically looks into the views directory for .ejs files
@@ -48,13 +48,16 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-// Handles the POST request that adds new URL to the "database"
+// Handles the POST request (from urls_new.ejs) that adds a new URL to the "database"
 app.post("/urls", (req, res) => {
   // Tests if we have a valid URL and redirects to a 404 if not
   // For now we are not rendering a specific page or doing client side validation for the URL
+  let errorMsg;
   if (!isValidURL(req.body.longURL)) {
-    res.redirect();
+    errorMsg = "Please use a valid URL format";
   }
+  res.render("urls_new", { errorMsg: errorMsg || "" }); //If errorMsg is not defined inside of the if (!isValidURL...) it'll be ""
+
   // Generates a new shortURL and stores it in the object
   const newShortUrl = generateRandomString();
   urlDatabase[newShortUrl] = req.body.longURL;
@@ -77,12 +80,22 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
+// Handles updates to the "database". Receives longURL from urls_show.ejs
+app.post("/urls/:shortURL", (req, res) => {
+  // Tests if we have a valid URL and redirects to a 404 if not
+  if (!isValidURL(req.body.longURL)) {
+    window.alert("Please use an URL with a valid format");
+  }
+  urlDatabase[req.params.shortURL] = req.body.longURL;
+  res.redirect("/urls");
+});
+
 // Redirects user to the longURL stored in our objects
 app.get("/u/:shortURL", (req, res) => {
   res.redirect(urlDatabase[req.params.shortURL]);
 });
 
-app.get("/*", (req, res) => {
+app.get("/error", (req, res) => {
   res.statusCode = 404;
   res.end(`404 Page Not Found`);
 });
