@@ -11,6 +11,17 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+// Generate a string of 6 random alphanumeric characters
+const generateRandomString = () => {
+  const alphaNum =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let returnString = "";
+  for (let i = 0; i < 6; i++) {
+    returnString += alphaNum[Math.floor(Math.random() * alphaNum.length)];
+  }
+  return returnString;
+};
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
