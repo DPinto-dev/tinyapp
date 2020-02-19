@@ -39,8 +39,8 @@ const getUserByEmail = inputEmail => {
     if (users[user].email === inputEmail) {
       return users[user];
     }
-    return false;
   }
+  return false;
 };
 
 app.get("/", (req, res) => {
@@ -69,10 +69,6 @@ app.get("/urls/new", (req, res) => {
 
 // New Account handler
 app.get("/register", (req, res) => {
-  console.log(
-    "TCL: users[req.cookies[user_id]]",
-    users[req.cookies["user_id"]]
-  );
   const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies["user_id"]]
@@ -84,7 +80,7 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   const newUserId = generateRandomString();
   const { email, password } = req.body;
-  console.log("users before register", users);
+
   if (email === "" || getUserByEmail(email) || password === "") {
     console.log("failed");
     res.statusCode = 400;
@@ -151,8 +147,6 @@ app.post("/login", (req, res) => {
       res.cookie("user_id", user.userId);
       res.redirect("/urls");
     } else {
-      console.log(req.body);
-      console.log(user);
       res.statusCode = 403;
       res.end("403 Forbidden");
     }
