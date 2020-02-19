@@ -14,6 +14,8 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {};
+
 // Generate a string of 6 random alphanumeric characters
 const generateRandomString = () => {
   const alphaNum =
@@ -25,12 +27,18 @@ const generateRandomString = () => {
   return returnString;
 };
 
-function isValidURL(string) {
+const isValidURL = string => {
   let res = string.match(
     /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
   );
   return res !== null;
-}
+};
+
+const isEmailRegistered = email => {
+  for (const user in users) {
+    return users[user].email === email;
+  }
+};
 
 app.get("/", (req, res) => {
   res.redirect("/urls");
@@ -42,14 +50,46 @@ app.get("/urls.json", (req, res) => {
 
 // Main GET route: page displays all urls in the "database"
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] }; // this is sending the urlDatabase object to the EJS template - it needs to be an object, even if it's a single variable, so that we can use its key to access the data within our template
+  // this is sending the urlDatabase object to the EJS template - it needs to be an object, even if it's a single variable, so that we can use its key to access the data within our template
+  const templateVars = {
+    urls: urlDatabase,
+    user: users[req.cookies["user_id"]]
+  };
   res.render("urls_index", templateVars); // This refers to the template './views/urls_index.ejs'. By default EJS automatically looks into the views directory for .ejs files
 });
 
 // Render the page for adding a new URL
 app.get("/urls/new", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  let templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]] };
   res.render("urls_new", templateVars);
+});
+
+// New Account handler
+app.get("/register", (req, res) => {
+  console.log(
+    "TCL: users[req.cookies[user_id]]",
+    users[req.cookies["user_id"]]
+  );
+  const templateVars = {
+    urls: urlDatabase,
+    user: users[req.cookies["user_id"]]
+  };
+  res.render("users_register", templateVars);
+});
+
+// New Account creation handler
+app.post("/register", (req, res) => {
+  const newUserId = generateRandomString();
+  const { email, password } = req.body;
+
+  if (email === "" || isEmailRegistered(email) || password === "") {
+    res.statusCode = 400;
+    res.end(`400 Bad Request`);
+  } else {
+    users[newUserId] = { newUserId, email, password };
+    res.cookie("user_id", newUserId);
+    res.redirect("/urls");
+  }
 });
 
 // Handles the POST request (from urls_new.ejs) that adds a new URL to the "database"
@@ -69,11 +109,10 @@ app.post("/urls", (req, res) => {
 
 // Renders the page that display the requested shorted URL
 app.get("/urls/:shortURL", (req, res) => {
-  // test with object shorthand notation
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render("urls_show", templateVars);
 });

@@ -19,9 +19,9 @@
       </div>
     </div>
     <div class="mx-auto" style="vertical-align:text-bottom">
-      <% if (username) { %>
+      <% if (user) { %>
       <form action="/logout" method="POST" class="form-inline">
-        <p>Logged in as: <%= username%></p>
+        <p>Logged in as: <%= user.email%></p>
 
         <input type="submit" method="POST" action="/logout" value="Logout" />
       </form>
