@@ -34,9 +34,12 @@ const isValidURL = string => {
   return res !== null;
 };
 
-const isEmailRegistered = email => {
+const getUserByEmail = inputEmail => {
   for (const user in users) {
-    return users[user].email === email;
+    if (users[user].email === inputEmail) {
+      return users[user];
+    }
+    return false;
   }
 };
 
@@ -81,12 +84,13 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   const newUserId = generateRandomString();
   const { email, password } = req.body;
-
-  if (email === "" || isEmailRegistered(email) || password === "") {
+  console.log("users before register", users);
+  if (email === "" || getUserByEmail(email) || password === "") {
+    console.log("failed");
     res.statusCode = 400;
     res.end(`400 Bad Request`);
   } else {
-    users[newUserId] = { newUserId, email, password };
+    users[newUserId] = { userId: newUserId, email, password };
     res.cookie("user_id", newUserId);
     res.redirect("/urls");
   }
@@ -109,7 +113,7 @@ app.post("/urls", (req, res) => {
 
 // Renders the page that display the requested shorted URL
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = {
+  const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
     user: users[req.cookies["user_id"]]
@@ -140,14 +144,34 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Receives login information and stores it in a cookie
 app.post("/login", (req, res) => {
-  console.log(req.body.username);
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
+  const { email, password } = req.body;
+  user = getUserByEmail(email);
+  if (user) {
+    if (password === user.password) {
+      res.cookie("user_id", user.userId);
+      res.redirect("/urls");
+    } else {
+      console.log(req.body);
+      console.log(user);
+      res.statusCode = 403;
+      res.end("403 Forbidden");
+    }
+  } else {
+    res.statusCode = 403;
+    res.end("403 Forbidden");
+  }
+});
+
+app.get("/login", (req, res) => {
+  const templateVars = {
+    user: users[req.cookies["user_id"]]
+  };
+  res.render("users_login", templateVars);
 });
 
 // "Logs out" the user by clearing the cookie file
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 

@@ -27,10 +27,9 @@
       </form>
 
       <% } else { %> <%# not logged in %>
-      <form action="/login" method="POST" class="form-inline">
-        <input type="text" name="username" id="" />
-        <input type="submit" value="Login" />
-      </form>
+
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
       <% } %>
     </div>
   </nav>
