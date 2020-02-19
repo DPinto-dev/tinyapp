@@ -10,8 +10,8 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b2xVn2: { longURL: "http://www.lighthouselabs.ca" },
+  "9sm5xK": { longURL: "http://www.google.com" }
 };
 
 const users = {};
@@ -43,28 +43,40 @@ const getUserByEmail = inputEmail => {
   return false;
 };
 
+// HOME
 app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
+// TESTING ENDPOINTS
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
+});
+app.get("/users.json", (req, res) => {
+  res.json(users);
 });
 
 // Main GET route: page displays all urls in the "database"
 app.get("/urls", (req, res) => {
   // this is sending the urlDatabase object to the EJS template - it needs to be an object, even if it's a single variable, so that we can use its key to access the data within our template
   const templateVars = {
-    urls: urlDatabase,
+    urlDatabase,
     user: users[req.cookies["user_id"]]
   };
   res.render("urls_index", templateVars); // This refers to the template './views/urls_index.ejs'. By default EJS automatically looks into the views directory for .ejs files
 });
 
-// Render the page for adding a new URL
+// If user is auth => has a cookie => Render the page for adding a new URL
 app.get("/urls/new", (req, res) => {
-  let templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]] };
-  res.render("urls_new", templateVars);
+  if (req.cookies["user_id"]) {
+    let templateVars = {
+      urls: urlDatabase,
+      user: users[req.cookies["user_id"]]
+    };
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 // New Account handler
@@ -92,18 +104,20 @@ app.post("/register", (req, res) => {
   }
 });
 
-// Handles the POST request (from urls_new.ejs) that adds a new URL to the "database"
+// Adds a new URL to the "database" (from urls_new.ejs)
 app.post("/urls", (req, res) => {
   // Tests if we have a valid URL and redirects to a 404 if not
   // For now we are not rendering a specific page or doing client side validation for the URL
-  let errorMsg;
   if (!isValidURL(req.body.longURL)) {
     // ... WIP ...
   }
 
-  // Generates a new shortURL and stores it in the object
+  // Adds a new entry to the database Generates a new shortURL and stores it in the object
   const newShortUrl = generateRandomString();
-  urlDatabase[newShortUrl] = req.body.longURL;
+  urlDatabase[newShortUrl] = {
+    longURL: req.body.longURL,
+    userID: req.cookies["user_id"]
+  };
   res.redirect(`/urls/${newShortUrl}`);
 });
 
