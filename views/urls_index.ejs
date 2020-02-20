@@ -23,6 +23,12 @@
     </header>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
+      <HR>
+        <h4>DEBUGGING:</h4>
+        <p>Users are: <%= Object.keys(user) %></p>
+        <p>user.userId is: <%= user.userId %></p>
+        <p>urlDatabase is: <%= Object.keys(urlDatabase)[0] %></p>
+      <HR>
       <table class="table">
         <thead>
           <tr>
@@ -35,19 +41,19 @@
         <tbody>
           <% for(let url in urlDatabase) { %>
           <tr>
+              <td><a href="/urls/<%= url %>"><%= url %></td></a>
+              <td><%= urlDatabase[url].longURL %></td>
+              <th>
+                <form action="/urls/<%= url %>" method="get">
+                  <button class="btn btn-outline-primary">Edit</button>
+                </form>
+              </th>
+              <th>
+                <form action="/urls/<%= url %>/delete" method="post">
+                  <button class="btn btn-outline-danger">Delete</button>
+                </form>
+              </th>
 
-            <td><a href="/urls/<%= url %>"><%= url %></td></a>
-            <td><%= urlDatabase[url].longURL %></td>
-            <th>
-              <form action="/urls/<%= url %>" method="get">
-                <button class="btn btn-outline-primary">Edit</button>
-              </form>
-            </th>
-            <th>
-              <form action="/urls/<%= url %>/delete" method="post">
-                <button class="btn btn-outline-danger">Delete</button>
-              </form>
-            </th>
           </tr>
           <% } %>
         </tbody>
