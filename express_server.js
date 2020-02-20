@@ -4,6 +4,7 @@ const ejs = require("ejs");
 
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 app.set("view engine", "ejs");
 
 // Middleware
@@ -15,7 +16,7 @@ const urlDatabase = {
 };
 
 const users = {
-  ZxTQtT: { userId: "ZxTQtT", email: "shakira@gmail.com", password: "1" }
+  // ZxTQtT: { userId: "ZxTQtT", email: "shakira@gmail.com", password: "1" }
 };
 
 // HELPER FUNCTIONS ----------------------------------------->
@@ -37,6 +38,7 @@ const isValidURL = string => {
   return res !== null;
 };
 
+// Returns a user object
 const getUserByEmail = inputEmail => {
   for (const user in users) {
     if (users[user].email === inputEmail) {
@@ -121,13 +123,15 @@ app.get("/login", (req, res) => {
 app.post("/register", (req, res) => {
   const newUserId = generateRandomString();
   const { email, password } = req.body;
+  const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (email === "" || getUserByEmail(email) || password === "") {
     console.log("failed");
     res.statusCode = 400;
     res.end(`400 Bad Request`);
   } else {
-    users[newUserId] = { userId: newUserId, email, password };
+    console.log(password, "\n", hashedPassword);
+    users[newUserId] = { userId: newUserId, email, password: hashedPassword };
     res.cookie("user_id", newUserId);
     res.redirect("/urls");
   }
@@ -136,8 +140,10 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   user = getUserByEmail(email);
+  const passwordAuthenticated = bcrypt.compareSync(password, user.password);
+  console.log(passwordAuthenticated);
   if (user) {
-    if (password === user.password) {
+    if (passwordAuthenticated) {
       res.cookie("user_id", user.userId);
       res.redirect("/urls");
     } else {
