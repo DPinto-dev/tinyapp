@@ -24,7 +24,11 @@
         </p>
       </div>
       <div class="card-footer text-muted">
-        <form action="/urls/<%= shortURL %>" method="post" class="form-inline">
+        <form
+          action="/urls/<%= shortURL %>?_method=PUT"
+          method="post"
+          class="form-inline"
+        >
           <h5>Edit the URL for <%= shortURL %>:</h5>
           <input
             class="form-control"

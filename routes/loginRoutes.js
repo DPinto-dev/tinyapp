@@ -4,8 +4,10 @@ const bcrypt = require("bcrypt");
 
 const { getUserByEmail } = require("../helpers/_helpers.js");
 
+const users = require("../database/usersDB");
+
 // Receives login information and stores it in a cookie
-router.get("/login", (req, res) => {
+router.get("/", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id]
   };
@@ -15,14 +17,17 @@ router.get("/login", (req, res) => {
 
 // AUTH POST ------------------------------------------------>
 
-router.post("/login", (req, res) => {
+router.post("/", (req, res) => {
   const { email, password } = req.body;
   user = getUserByEmail(email, users);
-  const passwordAuthenticated = bcrypt.compareSync(password, user.password);
-  console.log(passwordAuthenticated);
+
   if (user) {
+    const passwordAuthenticated = bcrypt.compareSync(
+      password,
+      users[user].password
+    );
     if (passwordAuthenticated) {
-      req.session.user_id = user.userId;
+      req.session.user_id = users[user].userId;
       res.redirect("/urls");
     } else {
       res.statusCode = 403;

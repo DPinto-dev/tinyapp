@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const users = require("../database/usersDB");
+const urlDatabase = require("../database/urlsDB");
 
 const {
   getUserByEmail,
@@ -8,16 +10,16 @@ const {
 } = require("../helpers/_helpers.js");
 
 // New Account handler
-router.get("/register", (req, res) => {
+router.get("/", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     user: users[req.session.user_id]
   };
-  res.render("users_register", templateVars);
+  res.render("../views/users_register", templateVars);
 });
 
 // New Account creation handler
-router.post("/register", (req, res) => {
+router.post("/", (req, res) => {
   const newUserId = generateRandomString();
   const { email, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);

@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const urlDatabase = require("../database/urlsDB");
 
 // Redirects user to the longURL stored in our objects
-router.get("/u/:shortURL", (req, res) => {
+router.get("/:shortURL", (req, res) => {
   res.redirect(`${urlDatabase[req.params.shortURL].longURL}`);
 });
 

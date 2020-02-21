@@ -20,15 +20,20 @@
     </div>
     <div class="mx-auto" style="vertical-align:text-bottom">
       <% if (user) { %>
-      <form action="/logout" method="POST" class="form-inline">
-        <p>Logged in as: <%= user.email%></p>
+      <form
+        action="/logout"
+        method="POST"
+        class="form-inline"
+        style="display: flex;"
+      >
+        <p style="margin:0 10px 0 0">Logged in as: <%= user.email%></p>
 
         <input type="submit" method="POST" action="/logout" value="Logout" />
       </form>
 
       <% } else { %> <%# not logged in %>
 
-      <a href="/login">Login</a>
+      <a href="/login" style="margin: 0 10px 0 0 ">Login</a>
       <a href="/register">Register</a>
       <% } %>
     </div>
