@@ -1,12 +1,11 @@
+// IMPORTS --------------------------------------------------
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-
 const { getUserByEmail, isUserLoggedIn } = require("../helpers/_helpers.js");
-
 const users = require("../database/usersDB");
 
-// Receives login information and stores it in a cookie
+// GET /login -----------------------------------------------
 router.get("/", (req, res) => {
   const currentUser = req.session.user_id;
   if (isUserLoggedIn(currentUser, users)) {
@@ -15,10 +14,8 @@ router.get("/", (req, res) => {
   const templateVars = { user: users[currentUser] };
   res.render("users_login", templateVars);
 });
-// ---------------------------------------------------------->
 
-// AUTH POST ------------------------------------------------>
-
+// AUTH POST ------------------------------------------------
 router.post("/", (req, res) => {
   const { email, password } = req.body;
   currentUser = getUserByEmail(email, users);

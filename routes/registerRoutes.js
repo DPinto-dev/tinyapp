@@ -1,16 +1,16 @@
+// IMPORTS --------------------------------------------------
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const users = require("../database/usersDB");
 const urlDatabase = require("../database/urlsDB");
-
 const {
   getUserByEmail,
   generateRandomString,
   isUserLoggedIn
 } = require("../helpers/_helpers.js");
 
-// New Account handler
+// GET /register --------------------------------------------
 router.get("/", (req, res) => {
   const currentUser = req.session.user_id;
   if (isUserLoggedIn(currentUser, users)) {
@@ -24,7 +24,8 @@ router.get("/", (req, res) => {
   }
 });
 
-// New Account creation handler
+// POST /register  ------------------------------------------
+// New Account creation handler. Sets the cookie(starts session)
 router.post("/", (req, res) => {
   const newUserId = generateRandomString();
   const { email, password } = req.body;

@@ -1,8 +1,10 @@
+// IMPORTS --------------------------------------------------
 const express = require("express");
 const router = express.Router();
 const urlDatabase = require("../database/urlsDB");
 
-// Redirects user to the longURL stored in our objects
+// GET /u/:shortURL  ----------------------------------------
+// Redirects user to the longURL stored in database. Available to all users.
 router.get("/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
     res.redirect(`${urlDatabase[req.params.shortURL].longURL}`);

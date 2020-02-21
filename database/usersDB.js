@@ -1,5 +1,4 @@
-const users = {
-  // ZxTQtT: { userId: "ZxTQtT", email: "shakira@gmail.com", password: "1" }
-};
+// Object that servers as DB for this project
+const users = {};
 
 module.exports = users;
