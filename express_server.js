@@ -52,18 +52,6 @@ app.get("/", (req, res) => {
   }
 });
 
-// TESTING ENDPOINTS ----------------------------------------
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-app.get("/users.json", (req, res) => {
-  res.json(users);
-});
-app.get("/error", (req, res) => {
-  res.statusCode = 404;
-  res.end(`404 Page Not Found`);
-});
-
 // STAR -----------------------------------------------------
 app.get("/*", (req, res) => {
   res.redirect("/login");

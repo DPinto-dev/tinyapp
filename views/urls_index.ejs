@@ -28,6 +28,7 @@
           <tr>
             <th scope="col">Short URL</th>
             <th scope="col">Long URL</th>
+            <th scope="col">Date Created</th>
             <th>Edit</th>
             <th>Delete</th>
           </tr>
@@ -37,6 +38,7 @@
           <tr>
               <td><a href="/urls/<%= url %>"><%= url %></td></a>
               <td><%= urlDatabase[url].longURL %></td>
+              <td><%= urlDatabase[url].creationDate %></td>
               <th>
                 <form action="/urls/<%= url %>" method="get">
                   <button class="btn btn-outline-primary">Edit</button>

@@ -1,7 +1,7 @@
 {
   "name": "tinyapp",
   "version": "1.0.0",
-  "description": "",
+  "description": "A full stack web app built with Node and Express that allows users to shorten long URLs (à la bit.ly). Project part of the Lighthouse Labs Web Development Bootcamp",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/DPintoLL/tinyapp.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Diogo Pinto",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/DPintoLL/tinyapp/issues"
@@ -21,7 +21,6 @@
   "dependencies": {
     "bcrypt": "2.0.0",
     "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.4",
     "cookie-session": "^1.4.0",
     "ejs": "^3.0.1",
     "express": "^4.17.1",

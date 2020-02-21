@@ -13,10 +13,13 @@ const {
 // Main GET route; Displays all urls in the database for a particular owner
 router.get("/", (req, res) => {
   const currentUser = req.session.user_id;
+  const filteredUrls = urlsForUser(currentUser, urlDatabase);
+  const creationDate = filteredUrls.creationDate;
   if (isUserLoggedIn(currentUser, users)) {
     const templateVars = {
-      urlDatabase: urlsForUser(currentUser, urlDatabase),
-      user: users[currentUser]
+      urlDatabase: filteredUrls,
+      user: users[currentUser],
+      creationDate
     };
     res.render("urls_index", templateVars);
   } else {
@@ -41,10 +44,17 @@ router.get("/new", (req, res) => {
 // POST /urls -----------------------------------------------
 // Adds a new URL to the database with an id (shortURL)
 router.post("/", (req, res) => {
+  // Creates new shortURL
   const newShortUrl = generateRandomString();
+
+  // Saves the date/time
+  const creationDate = new Date(Date.now()).toDateString();
+
+  // Inserts new URL in database
   urlDatabase[newShortUrl] = {
     longURL: req.body.longURL.trim(),
-    userId: req.session.user_id
+    userId: req.session.user_id,
+    creationDate
   };
   res.redirect(`/urls/${newShortUrl}`);
 });
