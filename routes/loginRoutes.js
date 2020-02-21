@@ -2,15 +2,17 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 
-const { getUserByEmail } = require("../helpers/_helpers.js");
+const { getUserByEmail, isUserLoggedIn } = require("../helpers/_helpers.js");
 
 const users = require("../database/usersDB");
 
 // Receives login information and stores it in a cookie
 router.get("/", (req, res) => {
-  const templateVars = {
-    user: users[req.session.user_id]
-  };
+  const currentUser = req.session.user_id;
+  if (isUserLoggedIn(currentUser, users)) {
+    res.redirect("/urls");
+  }
+  const templateVars = { user: users[currentUser] };
   res.render("users_login", templateVars);
 });
 // ---------------------------------------------------------->
@@ -19,19 +21,19 @@ router.get("/", (req, res) => {
 
 router.post("/", (req, res) => {
   const { email, password } = req.body;
-  user = getUserByEmail(email, users);
+  currentUser = getUserByEmail(email, users);
 
-  if (user) {
+  if (currentUser) {
     const passwordAuthenticated = bcrypt.compareSync(
       password,
-      users[user].password
+      users[currentUser].password
     );
     if (passwordAuthenticated) {
-      req.session.user_id = users[user].userId;
+      req.session.user_id = users[currentUser].userId;
       res.redirect("/urls");
     } else {
       res.statusCode = 403;
-      res.end("403 Forbidden");
+      res.end("Incorrect Email or Password (403)");
     }
   } else {
     res.statusCode = 403;

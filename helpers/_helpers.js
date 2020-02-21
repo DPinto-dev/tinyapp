@@ -1,7 +1,13 @@
-// This file aids importing these helper functions
+// This file aids importing these helper functions where needed
 
-const generateRandomString = require("./generateRandomString");
-const getUserByEmail = require("./getUserByEmail");
-const urlsForUser = require("./urlsForUser");
+const generateRandomString = require("./generateRandomString"),
+  getUserByEmail = require("./getUserByEmail"),
+  urlsForUser = require("./urlsForUser"),
+  isUserLoggedIn = require("./isUserLoggedIn");
 
-module.exports = { generateRandomString, getUserByEmail, urlsForUser };
+module.exports = {
+  generateRandomString,
+  getUserByEmail,
+  urlsForUser,
+  isUserLoggedIn
+};

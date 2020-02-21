@@ -6,16 +6,22 @@ const urlDatabase = require("../database/urlsDB");
 
 const {
   getUserByEmail,
-  generateRandomString
+  generateRandomString,
+  isUserLoggedIn
 } = require("../helpers/_helpers.js");
 
 // New Account handler
 router.get("/", (req, res) => {
-  const templateVars = {
-    urls: urlDatabase,
-    user: users[req.session.user_id]
-  };
-  res.render("../views/users_register", templateVars);
+  const currentUser = req.session.user_id;
+  if (isUserLoggedIn(currentUser, users)) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      urls: urlDatabase,
+      user: users[req.session.user_id]
+    };
+    res.render("../views/users_register", templateVars);
+  }
 });
 
 // New Account creation handler
@@ -24,15 +30,13 @@ router.post("/", (req, res) => {
   const { email, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  if (email === "" || getUserByEmail(email, users) || password === "") {
-    console.log("failed");
+  // Adds a new user to the DB if email is not in the DB and email and password are not ""
+  if (getUserByEmail(email, users) || email === "" || password === "") {
     res.statusCode = 400;
     res.end(`400 Bad Request`);
   } else {
-    console.log(password, "\n", hashedPassword);
     users[newUserId] = { userId: newUserId, email, password: hashedPassword };
     req.session.user_id = newUserId; //Sets a secure cookie
-    // res.cookie("user_id", newUserId);
     res.redirect("/urls");
   }
 });

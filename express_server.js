@@ -1,38 +1,31 @@
+// IMPORTS --------------------------------------------------
 const express = require("express");
-const app = express();
-const PORT = 8080; // default port 8080
 const ejs = require("ejs");
 const methodOverride = require("method-override");
-
-// The method override has to go after body-parser
-
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 
 const urlDatabase = require("./database/urlsDB");
 const users = require("./database/usersDB");
+const { isUserLoggedIn } = require("./helpers/_helpers.js");
 
+// SET UP ---------------------------------------------------
+const app = express();
+const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
 
-// Middleware
+// MIDDLEWARE -----------------------------------------------
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cookieSession({
     name: "session",
-    keys: ["key1", "key2"]
+    keys: [
+      "fzUSwHnn9QsiNxinOplaD5tI6bxRyMNraKEX4rIN",
+      "epL7nF21VrHVI6zgOpFBic0JPo07YGx2AdhUUiie"
+    ]
   })
 );
 app.use(methodOverride("_method"));
-// app.use(
-//   methodOverride(function(req, res) {
-//     if (req.body && typeof req.body === "object" && "_method" in req.body) {
-//       // look in urlencoded POST bodies and delete it
-//       var method = req.body._method;
-//       delete req.body._method;
-//       return method;
-//     }
-//   })
-// );
 
 // ROUTES ---------------------------------------------------
 const urlsRoutes = require("./routes/urlsRoutes"),
@@ -47,26 +40,19 @@ app.use("/register", registerRoutes);
 app.use("/login", loginRoutes);
 app.use("/logout", logoutRoutes);
 
-// ----------------------------------------------------------
-
-// HELPER FUNCTIONS -----------------------------------------
-const getUserByEmail = require("./helpers/getUserByEmail");
-const generateRandomString = require("./helpers/generateRandomString");
-const urlsForUser = require("./helpers/urlsForUser");
-// ----------------------------------------------------------
-
-// HOME;
+// BASIC ROUTES: --------------------------------------------
+// HOME -----------------------------------------------------
 app.get("/", (req, res) => {
   // If the user is logged in...
-  let user = req.session.user_id;
-  if (user) {
+  let currentUser = req.session.user_id;
+  if (isUserLoggedIn(currentUser, users)) {
     res.redirect("/urls");
   } else {
     res.redirect("/login");
   }
 });
 
-// TESTING ENDPOINTS ----------------------------------------->
+// TESTING ENDPOINTS ----------------------------------------
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
@@ -77,13 +63,13 @@ app.get("/error", (req, res) => {
   res.statusCode = 404;
   res.end(`404 Page Not Found`);
 });
-// ----------------------------------------------------------
 
-// STAR
+// STAR -----------------------------------------------------
 app.get("/*", (req, res) => {
   res.redirect("/login");
 });
 
+// SERVER INIT ----------------------------------------------
 app.listen(PORT, () => {
   console.log(`TinyApp server is listening on port ${PORT}!`);
 });

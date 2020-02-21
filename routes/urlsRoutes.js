@@ -4,16 +4,20 @@ const users = require("../database/usersDB");
 const urlDatabase = require("../database/urlsDB");
 
 // Helper Functions
-const { generateRandomString, urlsForUser } = require("../helpers/_helpers.js");
+const {
+  generateRandomString,
+  urlsForUser,
+  isUserLoggedIn
+} = require("../helpers/_helpers.js");
 
 // Main GET route; Displays all urls in the "database"
 router.get("/", (req, res) => {
   // this is sending the urlDatabase object to the EJS template - it needs to be an object, even if it's a single variable, so that we can use its key to access the data within our template
-  const user = req.session.user_id;
-  if (user) {
+  const currentUser = req.session.user_id;
+  if (isUserLoggedIn(currentUser, users)) {
     const templateVars = {
-      urlDatabase: urlsForUser(user, urlDatabase),
-      user: users[user]
+      urlDatabase: urlsForUser(currentUser, urlDatabase),
+      user: users[currentUser]
     };
     res.render("urls_index", templateVars); // This refers to the template './views/urls_index.ejs'. By default EJS automatically looks into the views directory for .ejs files
   } else {
@@ -25,9 +29,10 @@ router.get("/", (req, res) => {
 // If user is auth => has a cookie =>
 // Renders page for adding a new URL to DB
 router.get("/new", (req, res) => {
-  const user = req.session.user_id;
-  if (user) {
-    let templateVars = { user: users[user] };
+  const currentUser = req.session.user_id;
+
+  if (isUserLoggedIn(currentUser, users)) {
+    let templateVars = { user: users[currentUser] };
     res.render("urls_new", templateVars);
   } else {
     res.redirect("/login");
@@ -63,13 +68,13 @@ router.get("/:shortURL", (req, res) => {
     res.end("403 Forbidden - You cannot alter that URL");
   } else {
     // If the user is logged in...
-    if (currentUser && users[currentUser]) {
+    if (isUserLoggedIn(currentUser, users)) {
       // If the shortURL is in the DB
       if (urlDatabase[req.params.shortURL]) {
         const templateVars = {
           shortURL: req.params.shortURL,
           longURL: urlDatabase[req.params.shortURL].longURL,
-          user: users[req.session.user_id]
+          user: users[currentUser]
         };
         res.render("urls_show", templateVars);
       } else {
