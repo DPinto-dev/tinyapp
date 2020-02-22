@@ -18,11 +18,34 @@
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        <h5 class="card-title">TinyURL for: <%= longURL %></h5>
+        <h4 class="card-title">TinyURL for: <%= longURL %></h4>
         <p class="card-text">
           Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a>
         </p>
+        <p class="card-text">
+          Visited <%= visitCount %> times, by <%= uniqueVisitors %> unique
+          visitors.
+        </p>
       </div>
+      <div class="card-footer text-muted">
+      <h5 class="text-center">Log of Accesses made to this URL</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">User Id</th>
+              <th scope="col">Timestamp of Access</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(let visit of timestamp) { %>
+            <tr>
+                <td><%= visit.currentUser %></td></a>
+                <td><%= visit.timestamp %></td></a>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+
       <div class="card-footer text-muted">
         <form
           action="/urls/<%= shortURL %>?_method=PUT"

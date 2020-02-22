@@ -41,7 +41,6 @@ router.post("/", (req, res) => {
   } else {
     users[newUserId] = { userId: newUserId, email, password: hashedPassword };
     req.session.user_id = newUserId; //Sets a secure cookie
-    console.log("users", users);
     res.redirect("/urls");
   }
 });

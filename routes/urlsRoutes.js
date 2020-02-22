@@ -59,7 +59,8 @@ router.post("/", (req, res) => {
     userId: req.session.user_id,
     creationDate,
     visitCount: 0,
-    uniqueVisitsCount: []
+    uniqueVisitsCount: [],
+    timestamp: []
   };
   res.redirect(`/urls/${newShortUrl}`);
 });
@@ -82,11 +83,14 @@ router.get("/:shortURL", (req, res) => {
     // If the user is logged in...
     if (isUserLoggedIn(currentUser, users)) {
       // If the shortURL is in the DB
-      if (urlDatabase[req.params.shortURL]) {
+      if (urlDatabase[shortURL]) {
         const templateVars = {
-          shortURL: req.params.shortURL,
-          longURL: urlDatabase[req.params.shortURL].longURL,
-          user: users[currentUser]
+          shortURL,
+          longURL: urlDatabase[shortURL].longURL,
+          user: users[currentUser],
+          visitCount: urlDatabase[shortURL].visitCount,
+          uniqueVisitors: urlDatabase[shortURL].uniqueVisitsCount.length,
+          timestamp: urlDatabase[shortURL].timestamp
         };
         res.render("urls_show", templateVars);
       } else {
