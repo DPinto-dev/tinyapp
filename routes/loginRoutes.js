@@ -30,11 +30,17 @@ router.post("/", (req, res) => {
       res.redirect("/urls");
     } else {
       res.statusCode = 403;
-      res.end("Incorrect Email or Password (403)");
+      res.render("errors_view", {
+        errorMsg: "Incorrect Email or Password (403)",
+        user: null
+      });
     }
   } else {
     res.statusCode = 403;
-    res.end("403 Forbidden");
+    res.render("errors_view", {
+      errorMsg: "403 Forbidden",
+      user: null
+    });
   }
 });
 

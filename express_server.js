@@ -12,6 +12,7 @@ const { isUserLoggedIn } = require("./helpers/_helpers.js");
 // SET UP ---------------------------------------------------
 const app = express();
 const PORT = 8080; // default port 8080
+const serverStartTime = new Date(Date.now());
 app.set("view engine", "ejs");
 
 // MIDDLEWARE -----------------------------------------------
@@ -52,6 +53,14 @@ app.get("/", (req, res) => {
   }
 });
 
+// TESTING ENDPOINTS ----------------------------------------->
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
+app.get("/users.json", (req, res) => {
+  res.json(users);
+});
+
 // STAR -----------------------------------------------------
 app.get("/*", (req, res) => {
   res.redirect("/login");
@@ -59,5 +68,7 @@ app.get("/*", (req, res) => {
 
 // SERVER INIT ----------------------------------------------
 app.listen(PORT, () => {
-  console.log(`TinyApp server is listening on port ${PORT}!`);
+  console.log(
+    `TinyApp server is listening on port ${PORT}!\n${serverStartTime}`
+  );
 });

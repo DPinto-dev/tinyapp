@@ -34,10 +34,14 @@ router.post("/", (req, res) => {
   // Adds a new user to the DB if email is not in the DB and email and password are not ""
   if (getUserByEmail(email, users) || email === "" || password === "") {
     res.statusCode = 400;
-    res.end(`400 Bad Request`);
+    res.render("errors_view", {
+      errorMsg: "400 Bad Request",
+      user: null
+    });
   } else {
     users[newUserId] = { userId: newUserId, email, password: hashedPassword };
     req.session.user_id = newUserId; //Sets a secure cookie
+    console.log("users", users);
     res.redirect("/urls");
   }
 });

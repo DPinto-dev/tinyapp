@@ -24,7 +24,10 @@ router.get("/", (req, res) => {
     res.render("urls_index", templateVars);
   } else {
     res.statusCode = 403;
-    res.end("403 - Forbidden.\nPlease login first.");
+    res.render("errors_view", {
+      errorMsg: "403 - Forbidden.\nPlease login first.",
+      user: null
+    });
   }
 });
 
@@ -54,7 +57,9 @@ router.post("/", (req, res) => {
   urlDatabase[newShortUrl] = {
     longURL: req.body.longURL.trim(),
     userId: req.session.user_id,
-    creationDate
+    creationDate,
+    visitCount: 0,
+    uniqueVisitsCount: []
   };
   res.redirect(`/urls/${newShortUrl}`);
 });
@@ -69,7 +74,10 @@ router.get("/:shortURL", (req, res) => {
   // Makes sure only the owner can VIEW the URL edit page:
   if (urlOwner !== currentUser) {
     res.statusCode = 403;
-    res.end("403 Forbidden - You cannot alter that URL");
+    res.render("errors_view", {
+      errorMsg: "403 Forbidden - You cannot alter that URL",
+      user: null
+    });
   } else {
     // If the user is logged in...
     if (isUserLoggedIn(currentUser, users)) {
@@ -83,12 +91,18 @@ router.get("/:shortURL", (req, res) => {
         res.render("urls_show", templateVars);
       } else {
         res.statusCode = 404;
-        res.end("404 - Short URL Not Found");
+        res.render("errors_view", {
+          errorMsg: "404 - Short URL Not Found",
+          user: null
+        });
       }
     } else {
       // User not logged in
       res.statusCode = 403;
-      res.end("403 - Forbidden.\nPlease login first.");
+      res.render("errors_view", {
+        errorMsg: "403 - Forbidden.\nPlease login first.",
+        user: null
+      });
     }
   }
 });
@@ -106,7 +120,10 @@ router.put("/:shortURL", (req, res) => {
     res.redirect("/urls");
   } else {
     res.statusCode = 403;
-    res.end("403 Forbidden - You cannot alter that URL");
+    res.render("errors_view", {
+      errorMsg: "403 Forbidden - You cannot alter that URL",
+      user: null
+    });
   }
 });
 
@@ -123,7 +140,10 @@ router.delete("/:shortURL", (req, res) => {
     res.redirect("/urls");
   } else {
     res.statusCode = 403;
-    res.end("403 Forbidden - You cannot alter that URL");
+    res.render("errors_view", {
+      errorMsg: "403 Forbidden - You cannot alter that URL",
+      user: null
+    });
   }
 });
 
