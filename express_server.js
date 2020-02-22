@@ -53,14 +53,6 @@ app.get("/", (req, res) => {
   }
 });
 
-// TESTING ENDPOINTS ----------------------------------------->
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-app.get("/users.json", (req, res) => {
-  res.json(users);
-});
-
 // STAR -----------------------------------------------------
 app.get("/*", (req, res) => {
   res.redirect("/login");
