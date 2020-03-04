@@ -32,7 +32,7 @@ router.post("/", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   // Adds a new user to the DB if email is not in the DB and email and password are not ""
-  if (getUserByEmail(email, users) || email === "" || password === "") {
+  if (getUserByEmail(email, users) || !email || !password) {
     res.statusCode = 400;
     res.render("errors_view", {
       errorMsg: "400 Bad Request",

@@ -120,7 +120,8 @@ router.put("/:shortURL", (req, res) => {
 
   // Only the owner can edit the URL:
   if (urlOwner === currentUser) {
-    urlDatabase[shortURL] = { longURL: req.body.longURL, userId: currentUser };
+    urlDatabase[shortURL].longURL = req.body.longURL;
+    urlDatabase[shortURL].userId = currentUser;
     res.redirect("/urls");
   } else {
     res.statusCode = 403;
