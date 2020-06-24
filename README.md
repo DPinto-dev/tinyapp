@@ -39,8 +39,3 @@
 - Improve UI/UX
 - Create an unique identity and visual language
 - Implement minimal data persistency by saving the "databases" into a JSON file
-
-## Note for Mentor/Evaluator
-
-- I attempted to meet all requirements, including the stretch, but I didn't have time to work on the visuals. Besides what came in the boilerplate, there's no stylesheets, only minimal use of bootstrap.
-- Thank you for taking the time to evaluate my project.
